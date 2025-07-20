@@ -1,176 +1,176 @@
-# Bearing Fault Diagnosis Implementation Guide
+# Guia de Implementação do Diagnóstico de Falhas em Rolamentos
 
-## Overview
-This repository implements two complementary approaches for rolling element bearing fault diagnosis based on MathWorks tutorials:
+## Visão Geral
+Este repositório implementa duas abordagens complementares para diagnóstico de falhas em rolamentos de elementos rolantes baseadas nos tutoriais da MathWorks:
 
-1. **Classical Signal Processing Approach**: Uses envelope spectrum analysis and rule-based classification
-2. **Deep Learning Approach**: Uses transfer learning with SqueezeNet on scalogram images
+1. **Abordagem de Processamento Clássico de Sinais**: Utiliza análise do espectro envoltório e classificação baseada em regras
+2. **Abordagem de Aprendizado Profundo**: Utiliza aprendizado por transferência com SqueezeNet em imagens de escalogramas
 
-## Implementation Workflow
+## Fluxo de Implementação
 
-### Phase 1: Classical Signal Processing Approach
+### Fase 1: Abordagem de Processamento Clássico de Sinais
 
-#### Step 1: Data Preprocessing (`01_data_preprocessing/load_bearing_data.m`)
-- Load MFPT (Machinery Failure Prevention Technology) dataset
-- Define bearing critical frequencies:
+#### Passo 1: Pré-processamento de Dados (`01_data_preprocessing/load_bearing_data.m`)
+- Carregar conjunto de dados MFPT (Machinery Failure Prevention Technology)
+- Definir frequências críticas do rolamento:
   - BPFI (Ball Pass Frequency Inner): 297.0 Hz
   - BPFO (Ball Pass Frequency Outer): 236.4 Hz  
   - FTF (Fundamental Train Frequency): 15.9 Hz
   - BSF (Ball Spin Frequency): 139.1 Hz
-- Create file ensemble datastore for batch processing
+- Criar armazenamento de dados em conjunto para processamento em lote
 
-#### Step 2: Signal Processing (`02_signal_processing/`)
+#### Passo 2: Processamento de Sinais (`02_signal_processing/`)
 
-**Envelope Spectrum Analysis** (`envelope_spectrum_analysis.m`):
-- Apply high-pass filtering (>1000 Hz) to remove low-frequency noise
-- Compute envelope using Hilbert transform
-- Extract amplitudes at critical frequencies (BPFI, BPFO, FTF, BSF)
-- Calculate log ratio: log₁₀(BPFI_amplitude / BPFO_amplitude)
+**Análise do Espectro Envoltório** (`envelope_spectrum_analysis.m`):
+- Aplicar filtragem passa-alta (>1000 Hz) para remover ruído de baixa frequência
+- Computar envoltório usando transformada de Hilbert
+- Extrair amplitudes nas frequências críticas (BPFI, BPFO, FTF, BSF)
+- Calcular razão logarítmica: log₁₀(amplitude_BPFI / amplitude_BPFO)
 
-**Kurtogram Analysis** (`kurtogram_analysis.m`):
-- Compute kurtogram to find optimal bandpass filter parameters
-- Identify frequency band with maximum kurtosis for envelope analysis
-- Design optimal bandpass filter for signal conditioning
+**Análise de Kurtograma** (`kurtogram_analysis.m`):
+- Computar kurtograma para encontrar parâmetros ótimos do filtro passa-banda
+- Identificar banda de frequência com máxima curtose para análise do envoltório
+- Projetar filtro passa-banda ótimo para condicionamento do sinal
 
-#### Step 3: Feature Extraction (`03_feature_extraction/extract_fault_features.m`)
-Extract comprehensive feature set:
-- **Envelope features**: BPFI, BPFO, FTF, BSF amplitudes and ratios
-- **Time domain**: RMS, kurtosis, skewness, crest factor, peak amplitude
-- **Frequency domain**: Spectral centroid, rolloff, flux, variance
+#### Passo 3: Extração de Características (`03_feature_extraction/extract_fault_features.m`)
+Extrair conjunto abrangente de características:
+- **Características do envoltório**: Amplitudes e razões BPFI, BPFO, FTF, BSF
+- **Domínio do tempo**: RMS, curtose, assimetria, fator de crista, amplitude de pico
+- **Domínio da frequência**: Centroide espectral, rolloff, fluxo, variância
 
-#### Step 4: Classification (`04_classical_ml/rule_based_classifier.m`)
-Apply rule-based classifier using log ratio thresholds:
-- Log ratio ≤ -1.5 → Outer Race Fault
-- -1.5 < Log ratio ≤ 0.5 → Normal
-- Log ratio > 0.5 → Inner Race Fault
+#### Passo 4: Classificação (`04_classical_ml/rule_based_classifier.m`)
+Aplicar classificador baseado em regras usando limiares de razão logarítmica:
+- Razão log ≤ -1.5 → Falha na Pista Externa
+- -1.5 < Razão log ≤ 0.5 → Normal
+- Razão log > 0.5 → Falha na Pista Interna
 
-### Phase 2: Deep Learning Approach
+### Fase 2: Abordagem de Aprendizado Profundo
 
-#### Step 1: Data Preprocessing (`01_data_preprocessing/prepare_scalogram_data.m`)
-- Convert 1D vibration signals to 2D scalogram images using Continuous Wavelet Transform (CWT)
-- Segment signals into fixed-length windows (8192 samples)
-- Generate scalograms using Morlet wavelet ('cmor3-3')
-- Resize images to 227×227×3 pixels for SqueezeNet compatibility
-- Organize images by fault type: normal/, inner_fault/, outer_fault/
+#### Passo 1: Pré-processamento de Dados (`01_data_preprocessing/prepare_scalogram_data.m`)
+- Converter sinais de vibração 1D para imagens de escalograma 2D usando Transformada Wavelet Contínua (CWT)
+- Segmentar sinais em janelas de comprimento fixo (8192 amostras)
+- Gerar escalogramas usando wavelet de Morlet ('cmor3-3')
+- Redimensionar imagens para 227×227×3 pixels para compatibilidade com SqueezeNet
+- Organizar imagens por tipo de falha: normal/, inner_fault/, outer_fault/
 
-#### Step 2: Deep Learning (`05_deep_learning/train_squeezenet_classifier.m`)
-- Load pre-trained SqueezeNet model
-- Replace final layers for bearing fault classification (3 classes)
-- Configure transfer learning parameters:
-  - Learning rate: 1e-4
-  - Epochs: 4
-  - Mini-batch size: 20
-  - 80/20 train/validation split
-- Train network and evaluate performance
+#### Passo 2: Aprendizado Profundo (`05_deep_learning/train_squeezenet_classifier.m`)
+- Carregar modelo SqueezeNet pré-treinado
+- Substituir camadas finais para classificação de falhas em rolamentos (3 classes)
+- Configurar parâmetros de aprendizado por transferência:
+  - Taxa de aprendizado: 1e-4
+  - Épocas: 4
+  - Tamanho do mini-lote: 20
+  - Divisão treino/validação: 80/20
+- Treinar rede e avaliar desempenho
 
-## Key Functions
+## Funções Principais
 
 ### `bearing_fault_analysis.m`
-Comprehensive analysis function supporting multiple methods:
+Função de análise abrangente suportando múltiplos métodos:
 ```matlab
 results = bearing_fault_analysis(signal, fs, bearing_params, method)
 ```
-- **Inputs**: Signal, sampling frequency, bearing parameters, analysis method
-- **Methods**: 'envelope', 'kurtogram', 'features', 'all'
-- **Outputs**: Structured results with analysis outcomes and classifications
+- **Entradas**: Sinal, frequência de amostragem, parâmetros do rolamento, método de análise
+- **Métodos**: 'envelope', 'kurtogram', 'features', 'all'
+- **Saídas**: Resultados estruturados com resultados de análise e classificações
 
-## Expected Performance
+## Desempenho Esperado
 
-### Classical Approach
-- **Accuracy**: ~85-95% (depends on data quality and noise levels)
-- **Advantages**: Fast computation, interpretable results, no training required
-- **Best for**: Clean signals, known bearing parameters, real-time applications
+### Abordagem Clássica
+- **Precisão**: ~85-95% (depende da qualidade dos dados e níveis de ruído)
+- **Vantagens**: Computação rápida, resultados interpretáveis, não requer treinamento
+- **Melhor para**: Sinais limpos, parâmetros conhecidos do rolamento, aplicações em tempo real
 
-### Deep Learning Approach  
-- **Accuracy**: ~95-98% (reported in MathWorks tutorial)
-- **Advantages**: Robust to noise, automatic feature learning, scalable
-- **Best for**: Large datasets, noisy signals, complex fault patterns
+### Abordagem de Aprendizado Profundo  
+- **Precisão**: ~95-98% (reportado no tutorial da MathWorks)
+- **Vantagens**: Robusto ao ruído, aprendizado automático de características, escalável
+- **Melhor para**: Grandes conjuntos de dados, sinais ruidosos, padrões complexos de falhas
 
-## Usage Instructions
+## Instruções de Uso
 
-### Quick Start
-1. Place MFPT dataset in `data/mfpt_bearing_data/`
-2. Run scripts in numerical order:
-   - Classical: `01_` → `02_` → `03_` → `04_`
-   - Deep Learning: `01_` → `05_`
+### Início Rápido
+1. Coloque o conjunto de dados MFPT em `data/mfpt_bearing_data/`
+2. Execute os scripts em ordem numérica:
+   - Clássico: `01_` → `02_` → `03_` → `04_`
+   - Aprendizado Profundo: `01_` → `05_`
 
-### Custom Analysis
+### Análise Personalizada
 ```matlab
-% Load your data
+% Carregar seus dados
 load('your_bearing_data.mat');
 
-% Define bearing parameters
+% Definir parâmetros do rolamento
 bearing_params.BPFI = 297.0;
 bearing_params.BPFO = 236.4;
 bearing_params.FTF = 15.9;
 bearing_params.BSF = 139.1;
 
-% Run analysis
+% Executar análise
 results = bearing_fault_analysis(signal, fs, bearing_params, 'all');
 
-% Check classification
-fprintf('Predicted fault: %s\n', results.classification.predicted_fault);
+% Verificar classificação
+fprintf('Falha prevista: %s\n', results.classification.predicted_fault);
 ```
 
-## Dependencies
+## Dependências
 
-### Required MATLAB Toolboxes
-- **Signal Processing Toolbox**: For filtering, FFT, spectral analysis
-- **Predictive Maintenance Toolbox**: For `envspectrum()`, `kurtogram()` functions
-- **Deep Learning Toolbox**: For neural network training and evaluation
-- **Wavelet Toolbox**: For scalogram generation using CWT
+### Toolboxes MATLAB Necessários
+- **Signal Processing Toolbox**: Para filtragem, FFT, análise espectral
+- **Predictive Maintenance Toolbox**: Para funções `envspectrum()`, `kurtogram()`
+- **Deep Learning Toolbox**: Para treinamento e avaliação de redes neurais
+- **Wavelet Toolbox**: Para geração de escalogramas usando CWT
 
-### Optional Toolboxes
-- **Computer Vision Toolbox**: For advanced image preprocessing
-- **Parallel Computing Toolbox**: For faster training on GPU
+### Toolboxes Opcionais
+- **Computer Vision Toolbox**: Para pré-processamento avançado de imagens
+- **Parallel Computing Toolbox**: Para treinamento mais rápido em GPU
 
-## Troubleshooting
+## Solução de Problemas
 
-### Common Issues
+### Problemas Comuns
 
-1. **Missing envspectrum/kurtogram functions**
-   - Solution: Use manual implementations provided in scripts
-   - Install Predictive Maintenance Toolbox for full functionality
+1. **Funções envspectrum/kurtogram ausentes**
+   - Solução: Use implementações manuais fornecidas nos scripts
+   - Instale o Predictive Maintenance Toolbox para funcionalidade completa
 
-2. **Deep learning model not loading**
-   - Solution: Install Deep Learning Toolbox Model for SqueezeNet
-   - Alternative: Use custom CNN architecture
+2. **Modelo de aprendizado profundo não carrega**
+   - Solução: Instale o Deep Learning Toolbox Model para SqueezeNet
+   - Alternativa: Use arquitetura CNN personalizada
 
-3. **Memory issues with large datasets**
-   - Solution: Process data in batches using `fileEnsembleDatastore`
-   - Reduce image resolution for scalograms
+3. **Problemas de memória com grandes conjuntos de dados**
+   - Solução: Processe dados em lotes usando `fileEnsembleDatastore`
+   - Reduza a resolução das imagens para escalogramas
 
-4. **Low classification accuracy**
-   - Check bearing parameter accuracy (BPFI, BPFO values)
-   - Verify sampling frequency and data quality
-   - Adjust frequency tolerance in feature extraction
+4. **Baixa precisão de classificação**
+   - Verifique a precisão dos parâmetros do rolamento (valores BPFI, BPFO)
+   - Verifique a frequência de amostragem e qualidade dos dados
+   - Ajuste a tolerância de frequência na extração de características
 
-## Results Interpretation
+## Interpretação dos Resultados
 
-### Classical Approach Outputs
-- **Log ratio**: Primary diagnostic feature for fault classification
-- **Envelope spectrum**: Visual identification of fault frequencies
-- **Feature matrix**: Input for advanced ML algorithms
+### Saídas da Abordagem Clássica
+- **Razão logarítmica**: Característica diagnóstica primária para classificação de falhas
+- **Espectro envoltório**: Identificação visual das frequências de falha
+- **Matriz de características**: Entrada para algoritmos avançados de ML
 
-### Deep Learning Outputs
-- **Confusion matrix**: Classification performance by fault type
-- **Grad-CAM**: Visual explanation of network decisions
-- **Training curves**: Learning progress and convergence
+### Saídas do Aprendizado Profundo
+- **Matriz de confusão**: Desempenho de classificação por tipo de falha
+- **Grad-CAM**: Explicação visual das decisões da rede
+- **Curvas de treinamento**: Progresso do aprendizado e convergência
 
-## Extensions and Customization
+## Extensões e Personalização
 
-### Adding New Fault Types
-1. Modify classification thresholds in rule-based approach
-2. Add new folder categories for deep learning approach
-3. Update bearing parameter calculations for different bearing types
+### Adicionando Novos Tipos de Falhas
+1. Modificar limiares de classificação na abordagem baseada em regras
+2. Adicionar novas categorias de pastas para abordagem de aprendizado profundo
+3. Atualizar cálculos de parâmetros do rolamento para diferentes tipos de rolamentos
 
-### Alternative Approaches
-- **Spectral Analysis**: Power spectral density, cepstrum analysis
-- **Time-Frequency**: Short-time Fourier transform, spectrogram analysis
-- **Machine Learning**: SVM, Random Forest, ensemble methods
-- **Advanced DL**: LSTM for sequential data, autoencoders for anomaly detection
+### Abordagens Alternativas
+- **Análise Espectral**: Densidade espectral de potência, análise de cepstrum
+- **Tempo-Frequência**: Transformada de Fourier de tempo curto, análise de espectrograma
+- **Aprendizado de Máquina**: SVM, Random Forest, métodos de ensemble
+- **AL Avançado**: LSTM para dados sequenciais, autoencoders para detecção de anomalias
 
-## References
-- [MathWorks: Rolling Element Bearing Fault Diagnosis](https://www.mathworks.com/help/predmaint/ug/Rolling-Element-Bearing-Fault-Diagnosis.html)
-- [MathWorks: Deep Learning for Bearing Fault Diagnosis](https://www.mathworks.com/help/predmaint/ug/rolling-element-bearing-fault-diagnosis-using-deep-learning.html)
-- MFPT Challenge Dataset: https://www.mfpt.org/fault-data-sets/
+## Referências
+- [MathWorks: Diagnóstico de Falhas em Rolamentos de Elementos Rolantes](https://www.mathworks.com/help/predmaint/ug/Rolling-Element-Bearing-Fault-Diagnosis.html)
+- [MathWorks: Aprendizado Profundo para Diagnóstico de Falhas em Rolamentos](https://www.mathworks.com/help/predmaint/ug/rolling-element-bearing-fault-diagnosis-using-deep-learning.html)
+- Conjunto de Dados MFPT Challenge: https://www.mfpt.org/fault-data-sets/

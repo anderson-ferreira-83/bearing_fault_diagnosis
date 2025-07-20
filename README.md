@@ -1,65 +1,75 @@
-# Rolling Element Bearing Fault Diagnosis
+# Diagnóstico de Falhas em Rolamentos de Elementos Rolantes
 
-This repository implements bearing fault diagnosis using both classical signal processing and deep learning approaches based on MathWorks tutorials.
+![Diagrama de Diagnóstico de Falhas](assets/RollingElementBearingFaultDiagnosisExample_01.png)
 
-## Project Structure
+Este repositório implementa o diagnóstico de falhas em rolamentos usando abordagens de processamento clássico de sinais e aprendizado profundo baseado nos tutoriais da MathWorks.
+
+## Estrutura do Projeto
 
 ```
 bearing_fault_diagnosis/
-├── data/                           # Raw and processed datasets
-├── scripts/                        # Implementation scripts
-│   ├── 01_data_preprocessing/      # Data loading and preparation
-│   ├── 02_signal_processing/       # Signal analysis and filtering
-│   ├── 03_feature_extraction/      # Feature calculation
-│   ├── 04_classical_ml/           # Traditional ML approaches
-│   └── 05_deep_learning/          # Neural network implementations
-├── functions/                      # Reusable MATLAB functions
-├── results/                        # Output results and plots
-│   ├── classical_approach/        # Signal processing results
-│   └── deep_learning_approach/    # Deep learning results
-└── docs/                          # Documentation
+├── data/                           # Conjuntos de dados brutos e processados
+├── scripts/                        # Scripts de implementação
+│   ├── 01_data_preprocessing/      # Carregamento e preparação de dados
+│   ├── 02_signal_processing/       # Análise e filtragem de sinais
+│   ├── 03_feature_extraction/      # Cálculo de características
+│   ├── 04_classical_ml/           # Abordagens tradicionais de ML
+│   └── 05_deep_learning/          # Implementações de redes neurais
+├── functions/                      # Funções reutilizáveis do MATLAB
+├── results/                        # Resultados e gráficos de saída
+│   ├── classical_approach/        # Resultados do processamento de sinais
+│   └── deep_learning_approach/    # Resultados do aprendizado profundo
+└── docs/                          # Documentação
 ```
 
-## Implementation Order
+## Ordem de Implementação
 
-### Phase 1: Classical Signal Processing Approach
-1. **Data Preprocessing** (`01_data_preprocessing/`)
-   - Load MFPT dataset
-   - Extract bearing parameters (BPFO, BPFI, FTF, BSF)
+### Fase 1: Abordagem de Processamento Clássico de Sinais
+1. **Pré-processamento de Dados** (`01_data_preprocessing/`)
+   - Carregar conjunto de dados MFPT
+   - Extrair parâmetros do rolamento (BPFO, BPFI, FTF, BSF)
    
-2. **Signal Processing** (`02_signal_processing/`)
-   - Envelope spectrum analysis
-   - Kurtogram implementation
-   - Bandpass filtering
+2. **Processamento de Sinais** (`02_signal_processing/`)
+   - Análise do espectro envoltório
+   - Implementação do kurtograma
+   - Filtragem passa-banda
 
-3. **Feature Extraction** (`03_feature_extraction/`)
-   - Calculate envelope spectrum amplitudes
-   - Compute BPFI/BPFO amplitude ratios
-   - Extract kurtosis features
+3. **Extração de Características** (`03_feature_extraction/`)
+   - Calcular amplitudes do espectro envoltório
+   - Computar razões de amplitude BPFI/BPFO
+   - Extrair características de curtose
 
-4. **Classification** (`04_classical_ml/`)
-   - Rule-based classifier implementation
-   - Threshold-based fault detection
+4. **Classificação** (`04_classical_ml/`)
+   - Implementação de classificador baseado em regras
+   - Detecção de falhas baseada em limiar
 
-### Phase 2: Deep Learning Approach
-1. **Data Preprocessing** (`01_data_preprocessing/`)
-   - Convert 1D signals to 2D scalograms
-   - Wavelet transform implementation
-   - Image resize to 227x227x3
+### Fase 2: Abordagem de Aprendizado Profundo
+1. **Pré-processamento de Dados** (`01_data_preprocessing/`)
+   - Converter sinais 1D para escalogramas 2D
+   - Implementação de transformada wavelet
+   - Redimensionar imagens para 227x227x3
 
-2. **Deep Learning** (`05_deep_learning/`)
-   - SqueezeNet transfer learning
-   - Training configuration
-   - Model evaluation
+2. **Aprendizado Profundo** (`05_deep_learning/`)
+   - Aprendizado por transferência com SqueezeNet
+   - Configuração de treinamento
+   - Avaliação do modelo
 
-## Getting Started
+## Começando
 
-1. Run scripts in numerical order within each phase
-2. Classical approach scripts: `01_` → `02_` → `03_` → `04_`
-3. Deep learning scripts: `01_` → `05_`
+1. Execute os scripts em ordem numérica dentro de cada fase
+2. Scripts da abordagem clássica: `01_` → `02_` → `03_` → `04_`
+3. Scripts de aprendizado profundo: `01_` → `05_`
 
-## Dependencies
+## Dependências
 - MATLAB Predictive Maintenance Toolbox
 - Deep Learning Toolbox
 - Signal Processing Toolbox
 - Wavelet Toolbox
+
+## Sobre o Projeto
+
+Este projeto é baseado nos seguintes tutoriais da MathWorks:
+- [Diagnóstico de Falhas em Rolamentos de Elementos Rolantes](https://www.mathworks.com/help/predmaint/ug/Rolling-Element-Bearing-Fault-Diagnosis.html)
+- [Diagnóstico de Falhas em Rolamentos usando Aprendizado Profundo](https://www.mathworks.com/help/predmaint/ug/rolling-element-bearing-fault-diagnosis-using-deep-learning.html)
+
+O sistema implementa duas metodologias complementares para detectar e classificar falhas em rolamentos industriais, fornecendo tanto análise tradicional baseada em características quanto classificação automática por redes neurais.
