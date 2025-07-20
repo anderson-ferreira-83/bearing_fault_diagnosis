@@ -99,6 +99,9 @@ $RECYCLE.BIN/
 # Atom
 .atom/
 
+# Claude Code
+.claude/
+
 # ===========================
 # Modelos e Checkpoints
 # ===========================

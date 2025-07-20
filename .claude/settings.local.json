@@ -3,7 +3,10 @@
     "allow": [
       "Bash(unzip:*)",
       "Bash(python3:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(git config:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }
