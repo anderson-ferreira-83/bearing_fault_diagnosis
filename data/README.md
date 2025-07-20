@@ -2,30 +2,91 @@
 
 Este diretório contém os dados utilizados para o diagnóstico de falhas em rolamentos.
 
+## 🚀 Início Rápido - Extração de Dados
+
+### 1. Executar Extração Automática
+```matlab
+% No MATLAB, execute:
+run('scripts/00_setup/extract_data.m');
+```
+
+Este script irá:
+- ✅ Extrair automaticamente o arquivo zip
+- 📁 Organizar dados por tipo de falha
+- 📊 Criar índice para acesso otimizado
+- ✔️ Validar integridade dos dados
+
+### 2. Verificar Estrutura Criada
+Após a extração, a estrutura será:
+```
+data/
+├── RollingElementBearingFaultDiagnosis-Data-master.zip  # Arquivo original
+├── raw/                                                 # Dados extraídos
+├── organized/                                          # Dados organizados
+│   ├── normal/           # train_normal_baseline_*.mat, test_normal_baseline_*.mat
+│   ├── inner_fault/      # train_inner_fault_*.mat, test_inner_fault_*.mat
+│   └── outer_fault/      # train_outer_fault_*.mat, test_outer_fault_*.mat
+└── processed/                                          # Para dados processados
+```
+
 ## Fonte dos Dados
 
-O projeto utiliza o **conjunto de dados MFPT (Machinery Failure Prevention Technology)**, que é um padrão na área de diagnóstico de falhas em maquinário rotativo.
+O projeto utiliza o **conjunto de dados MFPT (Machinery Failure Prevention Technology)** do repositório GitHub da MathWorks.
 
 ### Sobre o MFPT Dataset
 
 - **Origem**: Society for Machinery Failure Prevention Technology
+- **Repositório**: https://github.com/mathworks/RollingElementBearingFaultDiagnosis-Data
 - **Tipo**: Dados de vibração de rolamentos com diferentes tipos de falhas
 - **Formato**: Arquivos .mat (MATLAB)
 - **Frequência de Amostragem**: 97,656 Hz (downsample para 25,600 Hz)
-- **Website**: https://www.mfpt.org/fault-data-sets/
+- **Total de Arquivos**: 20 arquivos .mat organizados em treino/teste
 
-## Estrutura dos Dados
+## 📋 Inventário de Dados
 
-```
-data/
-├── mfpt_bearing_data/          # Dados originais MFPT
-│   ├── normal/                 # Rolamentos sem falhas
-│   ├── inner_fault/           # Falhas na pista interna
-│   └── outer_fault/           # Falhas na pista externa
-├── processed/                  # Dados processados
-│   ├── features/              # Características extraídas
-│   └── scalograms/            # Imagens de escalogramas
-└── results/                    # Resultados das análises
+### Dados de Treinamento (15 arquivos)
+- **Normal (Baseline)**: 2 arquivos
+  - `train_normal_baseline_1.mat`
+  - `train_normal_baseline_2.mat`
+  
+- **Falha Pista Interna**: 5 arquivos
+  - `train_inner_fault_InnerRaceFault_vload_1.mat` até `vload_5.mat`
+  
+- **Falha Pista Externa**: 8 arquivos
+  - `train_outer_fault_OuterRaceFault_1.mat`, `OuterRaceFault_2.mat`
+  - `train_outer_fault_OuterRaceFault_vload_1.mat` até `vload_5.mat`
+
+### Dados de Teste (5 arquivos)
+- **Normal (Baseline)**: 1 arquivo
+  - `test_normal_baseline_3.mat`
+  
+- **Falha Pista Interna**: 2 arquivos
+  - `test_inner_fault_InnerRaceFault_vload_6.mat`
+  - `test_inner_fault_InnerRaceFault_vload_7.mat`
+  
+- **Falha Pista Externa**: 2 arquivos
+  - `test_outer_fault_OuterRaceFault_3.mat`
+  - `test_outer_fault_OuterRaceFault_vload_6.mat`
+  - `test_outer_fault_OuterRaceFault_vload_7.mat`
+
+## 🔧 Acesso Otimizado aos Dados
+
+### Usando o Índice de Dados
+```matlab
+% Carregar índice de dados
+load('data/organized/data_index.mat', 'data_index');
+
+% Listar arquivos por categoria
+normal_files = data_index.normal.files;
+inner_fault_files = data_index.inner_fault.files;
+outer_fault_files = data_index.outer_fault.files;
+
+% Estatísticas
+fprintf('Total de arquivos: %d\n', data_index.total_files);
+fprintf('Normal: %d, Inner: %d, Outer: %d\n', ...
+    data_index.normal.count, ...
+    data_index.inner_fault.count, ...
+    data_index.outer_fault.count);
 ```
 
 ## Tipos de Condições
@@ -133,27 +194,41 @@ scalogram_data = struct(
 3. Compare múltiplos algoritmos
 4. Teste robustez com ruído adicionado
 
-## Download e Instalação
+## 📥 Download e Instalação
 
-1. **Baixar dados MFPT**:
-   ```bash
-   # Visite: https://www.mfpt.org/fault-data-sets/
-   # Baixe "Bearing Data Set"
-   ```
+### Método 1: Automático (Recomendado)
+```matlab
+% 1. Execute a extração automática
+run('scripts/00_setup/extract_data.m');
 
-2. **Organizar arquivos**:
+% 2. Verifique a instalação
+load('data/organized/data_index.mat', 'data_index');
+fprintf('Dados extraídos: %d arquivos\n', data_index.total_files);
+```
+
+### Método 2: Manual
+1. **Baixar dados**:
+   - Acesse: https://github.com/mathworks/RollingElementBearingFaultDiagnosis-Data
+   - Baixe como ZIP e coloque em `data/`
+
+2. **Extrair manualmente**:
    ```matlab
-   % Coloque os arquivos .mat em:
-   data/mfpt_bearing_data/normal/
-   data/mfpt_bearing_data/inner_fault/
-   data/mfpt_bearing_data/outer_fault/
+   % Execute a função de extração
+   extract_data();
    ```
 
-3. **Verificar instalação**:
-   ```matlab
-   % Execute o script de verificação
-   run('scripts/01_data_preprocessing/load_bearing_data.m');
-   ```
+### Verificação da Instalação
+```matlab
+% Verificar se todos os dados estão disponíveis
+organized_dir = 'data/organized';
+categories = {'normal', 'inner_fault', 'outer_fault'};
+
+for i = 1:length(categories)
+    cat_dir = fullfile(organized_dir, categories{i});
+    files = dir(fullfile(cat_dir, '*.mat'));
+    fprintf('%s: %d arquivos\n', categories{i}, length(files));
+end
+```
 
 ## Citação
 

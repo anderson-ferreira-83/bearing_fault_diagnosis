@@ -56,9 +56,24 @@ bearing_fault_diagnosis/
 
 ## Começando
 
-1. Execute os scripts em ordem numérica dentro de cada fase
-2. Scripts da abordagem clássica: `01_` → `02_` → `03_` → `04_`
-3. Scripts de aprendizado profundo: `01_` → `05_`
+### 1. 🚀 Configuração Inicial (Obrigatório)
+```matlab
+% Extrair e organizar dados automaticamente
+run('scripts/00_setup/extract_data.m');
+```
+
+### 2. 📊 Execução das Análises
+Após a configuração inicial, execute os scripts em ordem numérica:
+
+**Abordagem Clássica:**
+```
+00_setup → 01_data_preprocessing → 02_signal_processing → 03_feature_extraction → 04_classical_ml
+```
+
+**Abordagem de Aprendizado Profundo:**
+```
+00_setup → 01_data_preprocessing → 05_deep_learning
+```
 
 ## Dependências
 - MATLAB Predictive Maintenance Toolbox

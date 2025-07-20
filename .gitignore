@@ -1,0 +1,152 @@
+# Bearing Fault Diagnosis - .gitignore
+
+# ===========================
+# Arquivos de Dados
+# ===========================
+
+# Arquivos ZIP de dados
+*.zip
+data/**/*.zip
+data/RollingElementBearingFaultDiagnosis-Data-master.zip
+
+# Dados extraídos e processados
+data/raw/
+data/organized/
+data/processed/
+
+# Dados temporários
+data/temp/
+data/cache/
+
+# ===========================
+# MATLAB
+# ===========================
+
+# Arquivos temporários do MATLAB
+*.asv
+*.m~
+
+# Arquivos de cache do MATLAB
+slprj/
+*.slxc
+
+# Arquivos de código gerado
+codegen/
+
+# Simulink
+*.slx.autosave
+*.slx.original
+
+# MATLAB App Designer
+*.mlapp.bak
+
+# ===========================
+# Resultados e Outputs
+# ===========================
+
+# Resultados de análises
+results/plots/
+results/reports/
+results/temp/
+
+# Imagens geradas
+*.png
+*.jpg
+*.jpeg
+*.gif
+!assets/*.png
+!assets/*.jpg
+!assets/*.jpeg
+!assets/*.gif
+
+# Arquivos de log
+*.log
+logs/
+
+# ===========================
+# Sistema Operacional
+# ===========================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# ===========================
+# IDEs e Editores
+# ===========================
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# MATLAB Editor
+*.m.bak
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Atom
+.atom/
+
+# ===========================
+# Modelos e Checkpoints
+# ===========================
+
+# Modelos treinados grandes
+*.mat
+!data/bearing_parameters.mat
+!data/data_index.mat
+
+# Checkpoints de deep learning
+checkpoints/
+models/*.mat
+
+# ===========================
+# Documentação
+# ===========================
+
+# Documentação gerada
+docs/build/
+docs/_build/
+
+# ===========================
+# Performance e Cache
+# ===========================
+
+# Cache de performance
+.matlab/
+cache/
+
+# Arquivos temporários grandes
+*.tmp
+*.temp
+
+# ===========================
+# Específicos do Projeto
+# ===========================
+
+# Dados experimentais privados
+private_data/
+experimental_data/
+
+# Configurações locais
+local_config.mat
+user_settings.mat
+
+# Scripts de teste pessoais
+test_*.m
+debug_*.m
+
+# Notebooks temporários
+*.mlx.bak

@@ -4,6 +4,11 @@ Este diretório contém todos os scripts organizados em fases sequenciais para i
 
 ## Estrutura dos Scripts
 
+### 🛠️ 00_setup/
+**Objetivo**: Configurar ambiente e extrair dados
+- `extract_data.m` - Extrai e organiza automaticamente dados do arquivo ZIP
+- Cria estrutura otimizada para análises subsequentes
+
 ### 📊 01_data_preprocessing/
 **Objetivo**: Carregar e preparar os dados para análise
 - `load_bearing_data.m` - Carrega conjunto de dados MFPT e define parâmetros do rolamento
@@ -28,8 +33,15 @@ Este diretório contém todos os scripts organizados em fases sequenciais para i
 
 ## Ordem de Execução
 
+### ⚠️ IMPORTANTE: Sempre comece com a configuração!
+```
+00_setup/extract_data.m  # ← OBRIGATÓRIO PRIMEIRO!
+```
+
 ### Para Abordagem Clássica:
 ```
+00_setup/extract_data.m
+↓
 01_data_preprocessing/load_bearing_data.m
 ↓
 02_signal_processing/envelope_spectrum_analysis.m
@@ -43,6 +55,8 @@ Este diretório contém todos os scripts organizados em fases sequenciais para i
 
 ### Para Abordagem de Deep Learning:
 ```
+00_setup/extract_data.m
+↓
 01_data_preprocessing/load_bearing_data.m
 ↓
 01_data_preprocessing/prepare_scalogram_data.m
